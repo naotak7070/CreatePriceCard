@@ -136,7 +136,7 @@ def create_price_cards_from_df(df):
     return pdf_buffer.getvalue()
 
 # StreamlitアプリUI
-st.title("Price Card Generator")
+st.title("最悪の場合にプライスカードを発行するアプリ")
 
 uploaded_file = st.file_uploader("Excelファイルをアップロードしてください", type=["xlsx", "xls"])
 if uploaded_file is not None:
