@@ -112,7 +112,7 @@ def create_price_cards_from_df(df):
         c.drawString(text_left, text_top - 30, f"上代: {msrp}")
         c.drawString(text_left, text_top - 40, f"販売価格: {sales_price}")
 
-        # JANコード
+         # JANコード
         if not is_empty_value(jan_code):
             jan_code = str(jan_code)
             if len(jan_code) < 13:
@@ -121,12 +121,24 @@ def create_price_cards_from_df(df):
                 jan_code = jan_code[:13]
 
             if jan_code.isdigit():
-                barcode_y_position = y + 5*mm
                 barcode = eanbc.Ean13BarcodeWidget(jan_code)
                 barcode.barHeight = card_height / 3.0
-                barcode_drawing = Drawing(card_width, card_height/3)
+
+                # バーコードの実際の描画範囲を取得
+                x1, y1, x2, y2 = barcode.getBounds()
+                barcode_width = x2 - x1
+                barcode_height = y2 - y1
+
+                # カードの右下に配置したい場合:
+                # 右から2mm、下から2mm余白を空けると仮定
+                barcode_x = x + card_width - barcode_width - 2*mm
+                barcode_y = y + 2*mm
+
+                # Drawing領域はバーコードぴったりでOK (幅と高さをバーコードに合わせる)
+                barcode_drawing = Drawing(barcode_width, barcode_height)
                 barcode_drawing.add(barcode)
-                renderPDF.draw(barcode_drawing, c, x+2*mm, barcode_y_position)
+
+                renderPDF.draw(barcode_drawing, c, barcode_x, barcode_y)
 
         card_count += 1
 
