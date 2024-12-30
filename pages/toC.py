@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # 関数ファイルからインポート
-from pricecards import create_price_cards_from_df_18_toc,create_price_cards_from_df_24_toc
+from pricecards import (create_price_cards_from_df_18_toc,create_price_cards_from_df_24_toc)
 
 st.title("PriceCardApp for to C")
 
