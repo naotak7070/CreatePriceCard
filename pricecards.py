@@ -136,6 +136,9 @@ def create_price_cards_from_df_24(df):
     return pdf_buffer.getvalue()
 
 
+
+
+
 def create_price_cards_from_df_18(df):
     """
     18枚シート(3列×6行)用のPDFを生成する。
@@ -349,32 +352,7 @@ def create_price_cards_from_df_18_toc(df):
         jan_code = safe_str(record.get('商品コード', ''))
         product_name = safe_str(record.get('商品名', ''))
         msrp = safe_str(record.get('商品単価', ''))  # 小売価格（上代）
-        # sales_price = safe_str(record.get('unit_price', ''))  # 卸単価
-        # lot = safe_str(record.get('lot', ''))  # 販売ロット
-
-        # QRコード
-        # if uuid:
-        #     qr = qrcode.QRCode(box_size=2, border=0)
-        #     qr.add_data(uuid)
-        #     qr.make()
-        #     img_qr = qr.make_image(fill_color="black", back_color="white")
-
-        #     qr_buf = BytesIO()
-        #     img_qr.save(qr_buf, format='PNG')
-        #     qr_buf.seek(0)
-        #     qr_img = utils.ImageReader(qr_buf)
-
-        #     qr_img_width = 15 * mm
-        #     qr_img_height = 15 * mm
-        #     c.drawImage(
-        #         qr_img,
-        #         x + 2*mm,
-        #         y + card_height - qr_img_height - 2*mm,
-        #         width=qr_img_width,
-        #         height=qr_img_height,
-        #         preserveAspectRatio=True,
-        #         mask='auto'
-        #     )
+        
 
         # テキスト表示位置
         text_left = x + 2*mm + 15*mm + 2*mm
@@ -397,6 +375,96 @@ def create_price_cards_from_df_18_toc(df):
         # JANコード (右下)
         if jan_code.isdigit():
             # 長さ補正
+            if len(jan_code) < 13:
+                jan_code = jan_code.zfill(13)
+            elif len(jan_code) > 13:
+                jan_code = jan_code[:13]
+
+            barcode = eanbc.Ean13BarcodeWidget(jan_code)
+            barcode.barHeight = card_height / 3.0
+            x1, y1, x2, y2 = barcode.getBounds()
+            barcode_width = x2 - x1
+            barcode_height = y2 - y1
+
+            barcode_x = x + card_width - barcode_width - 2*mm
+            barcode_y = y + 2*mm
+
+            barcode_drawing = Drawing(barcode_width, barcode_height)
+            barcode_drawing.add(barcode)
+            renderPDF.draw(barcode_drawing, c, barcode_x, barcode_y)
+
+        card_count += 1
+
+    c.showPage()
+    c.save()
+    pdf_buffer.seek(0)
+    return pdf_buffer.getvalue()
+
+def create_price_cards_from_df_24_toc(df):
+    """
+    24枚シート(8行×3列)用のPDFを生成する例。
+    （既存コードをそのまま引用）
+    """
+    pt_per_mm = 72.0 / 25.4
+    page_width, page_height = A4
+    left_margin = 6 * pt_per_mm
+    top_margin = 8.5 * pt_per_mm
+
+    card_width = 66 * pt_per_mm
+    card_height = 35 * pt_per_mm
+
+    cols = 3
+    rows = 8
+    cards_per_page = cols * rows
+
+    pdf_buffer = BytesIO()
+    c = canvas.Canvas(pdf_buffer, pagesize=A4)
+    c.setFont("Meiryo", 8)
+
+    needed_columns = ["タグ", "品番", "商品コード", "商品名", "商品単価"]
+    records = df.to_dict(orient='records')
+
+    card_count = 0
+    for i, record in enumerate(records):
+        if all(is_empty_value(record.get(col)) for col in needed_columns):
+            continue
+
+        card_index_on_page = card_count % cards_per_page
+        col_idx = card_index_on_page % cols
+        row_idx = card_index_on_page // cols
+
+        if card_index_on_page == 0 and card_count != 0:
+            c.showPage()
+            c.setFont("Meiryo", 8)
+
+        x = left_margin + col_idx * card_width
+        y = page_height - top_margin - (row_idx + 1) * card_height
+
+        # レコード抽出＆文字列化
+        # uuid = safe_str(record.get('id', ''))
+        company = safe_str(record.get('タグ', ''))
+        display_code = safe_str(record.get('品番', ''))
+        jan_code = safe_str(record.get('商品コード', ''))
+        product_name = safe_str(record.get('商品名', ''))
+        msrp = safe_str(record.get('商品単価', ''))  # 小売価格（上代）
+        
+
+
+        # テキスト
+        text_left = x + (15 * mm) + 4 * mm
+        text_top = y + card_height - 2*mm
+        c.drawString(text_left, text_top, company[:13])
+        c.drawString(text_left, text_top - 10, product_name[:13])
+        c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
+          # ★ここで大きなサイズに変更(例: 10pt)
+        c.setFont("Meiryo", 14)
+        c.drawString(text_left, text_top - 36, f" {msrp} 円")
+        # 使い終わったら、元のサイズ(8pt)に戻す
+        c.setFont("Meiryo", 8)
+
+
+        # JANコード
+        if jan_code.isdigit():
             if len(jan_code) < 13:
                 jan_code = jan_code.zfill(13)
             elif len(jan_code) > 13:

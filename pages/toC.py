@@ -2,25 +2,34 @@ import streamlit as st
 import pandas as pd
 
 # 関数ファイルからインポート
-from pricecards import create_price_cards_from_df_18_toc
+from pricecards import create_price_cards_from_df_18_toc,create_price_cards_from_df_24_toc
 
 st.title("PriceCardApp for to C")
 
 # ラジオボタンでシートタイプを選択（デフォルトを18枚シートにする: index=0）
+sheet_option = st.radio(
+    "作成するシートタイプを選択してください",
+    ["18枚シート", "24枚シート"], 
+    index=0  # ← これで「18枚シート」をデフォルトに
+)
+
 
 uploaded_file = st.file_uploader("Excelファイル（スマレジインポートデータ）をアップロードしてください", type=["xlsx", "xls"])
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.write("アップロードされたファイル:")
     st.dataframe(df.head())
-
     if st.button("PDFを生成"):
-        pdf_data = create_price_cards_from_df_18_toc(df)
-    
-        st.success("PDFが生成されました。")
-        st.download_button(
-            label="PDFをダウンロード",
-            data=pdf_data,
-            file_name="output.pdf",
-            mime="application/pdf"
-        )
+            # 選択に応じて処理を分岐
+            if sheet_option == "18枚シート":
+                pdf_data = create_price_cards_from_df_18_toc(df)
+            else:
+                pdf_data = create_price_cards_from_df_24_toc(df)
+
+            st.success("PDFが生成されました。")
+            st.download_button(
+                label="PDFをダウンロード",
+                data=pdf_data,
+                file_name="output.pdf",
+                mime="application/pdf"
+            )
