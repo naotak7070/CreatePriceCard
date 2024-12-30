@@ -6,6 +6,9 @@ from pricecards import create_price_cards_from_df_18_toc,create_price_cards_from
 
 st.title("PriceCardApp for to C")
 
+st.write("テンプレートファイルは[こちら](https://docs.google.com/spreadsheets/d/1HGsDp4fW_bAiN09WrbholKJGAaoYFuchakoPNqaBOsg/edit?gid=67118262#gid=67118262)")
+st.write("（fukukaen.comでアクセスしてください）")
+
 # ラジオボタンでシートタイプを選択（デフォルトを18枚シートにする: index=0）
 sheet_option = st.radio(
     "作成するシートタイプを選択してください",
