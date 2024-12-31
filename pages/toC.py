@@ -36,3 +36,6 @@ if uploaded_file is not None:
                 file_name=f"output_toC_{company_list[0]}_{layout}.pdf",
                 mime="application/pdf"
             )
+
+
+st.wirte("印刷の際は「実際のサイズ」で印刷すること")
