@@ -5,6 +5,7 @@ import pandas as pd
 from pricecards import (create_price_cards_from_df_18_toc,create_price_cards_from_df_24_toc)
 
 st.title("PriceCardApp for to C")
+st.wirte("印刷の際は「実際のサイズ」で印刷すること")
 
 st.write("テンプレートファイルは[こちら](https://docs.google.com/spreadsheets/d/1HGsDp4fW_bAiN09WrbholKJGAaoYFuchakoPNqaBOsg/edit?gid=67118262#gid=67118262)")
 st.write("（fukukaen.comでアクセスしてください）")
@@ -38,4 +39,3 @@ if uploaded_file is not None:
             )
 
 
-st.wirte("印刷の際は「実際のサイズ」で印刷すること")
