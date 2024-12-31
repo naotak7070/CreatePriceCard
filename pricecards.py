@@ -76,6 +76,8 @@ def create_price_cards_from_df_24(df):
 
         x = left_margin + col_idx * card_width
         y = page_height - top_margin - (row_idx + 1) * card_height
+        # y_in_mm = y / pt_per_mm
+        # print(f"y in mm: {y_in_mm}")
 
         uuid = safe_str(record.get('id', ''))
         company = safe_str(record.get('出展者名', ''))
@@ -111,13 +113,16 @@ def create_price_cards_from_df_24(df):
 
         # テキスト
         text_left = x + (15 * mm) + 4 * mm
-        text_top = y + card_height - 2*mm
+        # text_top = y + card_height - 2*mm
+        text_top = y + card_height - 3.5*mm
+        
+
         c.drawString(text_left, text_top, company[:13])
         c.drawString(text_left, text_top - 10, product_name[:13])
         c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
         c.drawString(text_left, text_top - 30, f"参考上代: {msrp_text}")
-        c.drawString(text_left, text_top - 40, f"卸販売単価: {sales_price}")
-        c.drawString(text_left, text_top - 50, f"ロット: {lot}")
+        c.drawString(text_left, text_top - 40, f"卸販売単価: {sales_price},ロット: {lot}")
+        # c.drawString(text_left, text_top - 50, f"ロット: {lot}")
 
         # JANコード
         if jan_code.isdigit():
@@ -257,7 +262,7 @@ def create_price_cards_from_df_18(df):
 
         # テキスト表示位置
         text_left = x + 2*mm + 15*mm + 2*mm
-        text_top = y + card_height - 2*mm
+        text_top = y + card_height - 3.5*mm
 
         # テキスト表示
         c.drawString(text_left, text_top, company[:13])
