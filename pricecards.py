@@ -82,7 +82,11 @@ def create_price_cards_from_df_24(df):
         display_code = safe_str(record.get('number', ''))
         jan_code = safe_str(record.get('jan', ''))
         product_name = safe_str(record.get('name', ''))
-        msrp = safe_str(record.get('retail_price', ''))  # 小売価格（上代）
+        msrp = safe_str(record.get('retail_price', ''))  # 小売価格（参考上代）
+        if msrp == "" or msrp == "0":
+            msrp_text = "オープン"
+        else:
+            msrp_text = msrp
         sales_price = safe_str(record.get('unit_price', ''))  # 卸単価
         lot = safe_str(record.get('lot', ''))  # 販売ロット
 
@@ -111,8 +115,9 @@ def create_price_cards_from_df_24(df):
         c.drawString(text_left, text_top, company[:13])
         c.drawString(text_left, text_top - 10, product_name[:13])
         c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
-        c.drawString(text_left, text_top - 30, f"上代: {msrp}")
-        c.drawString(text_left, text_top - 40, f"販売価格: {sales_price} Lot: {lot}")
+        c.drawString(text_left, text_top - 30, f"参考上代: {msrp_text}")
+        c.drawString(text_left, text_top - 40, f"卸販売単価: {sales_price}")
+        c.drawString(text_left, text_top - 50, f"ロット: {lot}")
 
         # JANコード
         if jan_code.isdigit():
@@ -216,7 +221,11 @@ def create_price_cards_from_df_18(df):
         display_code = safe_str(record.get('number', ''))
         jan_code = safe_str(record.get('jan', ''))
         product_name = safe_str(record.get('name', ''))
-        msrp = safe_str(record.get('retail_price', ''))  # 小売価格（上代）
+        msrp = safe_str(record.get('retail_price', ''))  # 小売価格（参考上代）
+        if msrp == "" or msrp == "0":
+            msrp_text = "オープン"
+        else:
+            msrp_text = msrp
         sales_price = safe_str(record.get('unit_price', ''))  # 卸単価
         lot = safe_str(record.get('lot', ''))  # 販売ロット
         # ★ 会社名リストに追加
@@ -256,9 +265,9 @@ def create_price_cards_from_df_18(df):
         c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
         # ★ここで大きなサイズに変更(例: 10pt)
         c.setFont("Meiryo", 10)
-        c.drawString(text_left, text_top - 34, f"上代: {msrp}")
-        c.drawString(text_left, text_top - 48, f"販売価格: {sales_price}")
-        c.drawString(text_left, text_top - 62, f"Lot: {lot}")
+        c.drawString(text_left, text_top - 34, f"参考上代: {msrp_text}")
+        c.drawString(text_left, text_top - 48, f"卸販売単価: {sales_price}")
+        c.drawString(text_left, text_top - 62, f"ロット数: {lot}")
 
         # 使い終わったら、元のサイズ(8pt)に戻す
         c.setFont("Meiryo", 8)
@@ -365,7 +374,18 @@ def create_price_cards_from_df_18_toc(df):
         display_code = safe_str(record.get('品番', ''))
         jan_code = safe_str(record.get('商品コード', ''))
         product_name = safe_str(record.get('商品名', ''))
-        msrp = safe_str(record.get('商品単価', ''))  # 小売価格（上代）
+        msrp_str = safe_str(record.get('商品単価', ''))  # 小売価格（参考上代）
+        #税込価格換算
+        # 1) 数値として変換できない場合は 0 とみなす or 例外処理をする
+        try:
+            # float()なら小数点も扱える
+            msrp_val = float(msrp_str)
+        except ValueError:
+            msrp_val = 0
+
+        # 2) 計算して丸める
+        salesprice_intax = round(msrp_val * 1.1)  # 小数点以下を四捨五入する
+        
         # ★ 会社名リストに追加
         company_list.append(company)
         
@@ -380,7 +400,7 @@ def create_price_cards_from_df_18_toc(df):
         c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
         # ★ここで大きなサイズに変更(例: 10pt)
         c.setFont("Meiryo", 14)
-        c.drawString(text_left, text_top - 36, f"税抜 {msrp} 円")
+        c.drawString(text_left, text_top - 36, f"税込 {salesprice_intax} 円")
         # c.drawString(text_left, text_top - 50, f"Lot: {lot}")
 
         # 使い終わったら、元のサイズ(8pt)に戻す
@@ -465,7 +485,18 @@ def create_price_cards_from_df_24_toc(df):
         display_code = safe_str(record.get('品番', ''))
         jan_code = safe_str(record.get('商品コード', ''))
         product_name = safe_str(record.get('商品名', ''))
-        msrp = safe_str(record.get('商品単価', ''))  # 小売価格（上代）
+        msrp_str = safe_str(record.get('商品単価', ''))  # 小売価格（参考上代）
+        # 1) 数値として変換できない場合は 0 とみなす or 例外処理をする
+        try:
+            # float()なら小数点も扱える
+            msrp_val = float(msrp_str)
+        except ValueError:
+            msrp_val = 0
+
+        # 2) 計算して丸める
+        salesprice_intax = round(msrp_val * 1.1)  # 小数点以下を四捨五入する
+        
+        
         # ★ 会社名リストに追加
         company_list.append(company)
         
@@ -479,7 +510,7 @@ def create_price_cards_from_df_24_toc(df):
         c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
           # ★ここで大きなサイズに変更(例: 10pt)
         c.setFont("Meiryo", 14)
-        c.drawString(text_left, text_top - 36, f" {msrp} 円")
+        c.drawString(text_left, text_top - 36, f" 税込{salesprice_intax} 円")
         # 使い終わったら、元のサイズ(8pt)に戻す
         c.setFont("Meiryo", 8)
 
