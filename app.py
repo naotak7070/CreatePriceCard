@@ -8,7 +8,7 @@ from pricecards import (
 )
 
 st.title("PriceCardApp for to B")
-st.wirte("印刷の際は「実際のサイズ」で印刷すること")
+st.write("印刷の際は「実際のサイズ」で印刷すること")
 
 # ラジオボタンでシートタイプを選択（デフォルトを18枚シートにする: index=0）
 sheet_option = st.radio(
