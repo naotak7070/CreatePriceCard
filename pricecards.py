@@ -262,7 +262,7 @@ def create_price_cards_from_df_18(df):
 
         # テキスト表示位置
         text_left = x + 2*mm + 15*mm + 2*mm
-        text_top = y + card_height - 3.5*mm
+        text_top = y + card_height - 2*mm
 
         # テキスト表示
         c.drawString(text_left, text_top, company[:13])
@@ -509,7 +509,7 @@ def create_price_cards_from_df_24_toc(df):
 
         # テキスト
         text_left = x + (15 * mm) + 4 * mm
-        text_top = y + card_height - 2*mm
+        text_top = y + card_height - 3.5*mm
         c.drawString(text_left, text_top, company[:13])
         c.drawString(text_left, text_top - 10, product_name[:13])
         c.drawString(text_left, text_top - 20, f"{display_code[:15]}")
