@@ -59,6 +59,9 @@ def create_price_cards_from_df_24(df):
     records = df.to_dict(orient="records")
 
     card_count = 0
+    # ★ 会社名を格納するリストを用意
+    company_list = []
+    
     for i, record in enumerate(records):
         if all(is_empty_value(record.get(col)) for col in needed_columns):
             continue
@@ -82,6 +85,9 @@ def create_price_cards_from_df_24(df):
         msrp = safe_str(record.get('retail_price', ''))  # 小売価格（上代）
         sales_price = safe_str(record.get('unit_price', ''))  # 卸単価
         lot = safe_str(record.get('lot', ''))  # 販売ロット
+
+        # ★ 会社名リストに追加
+        company_list.append(company)
 
         # QRコード
         if uuid:
@@ -133,7 +139,7 @@ def create_price_cards_from_df_24(df):
     c.showPage()
     c.save()
     pdf_buffer.seek(0)
-    return pdf_buffer.getvalue()
+    return pdf_buffer.getvalue(), company_list,24
 
 
 
@@ -181,6 +187,9 @@ def create_price_cards_from_df_18(df):
     records = df.to_dict(orient='records')
 
     card_count = 0
+    # ★ 会社名を格納するリストを用意
+    company_list = []
+
     for i, record in enumerate(records):
         # すべて空欄ならスキップ
         if all(is_empty_value(record.get(col)) for col in needed_columns):
@@ -210,6 +219,8 @@ def create_price_cards_from_df_18(df):
         msrp = safe_str(record.get('retail_price', ''))  # 小売価格（上代）
         sales_price = safe_str(record.get('unit_price', ''))  # 卸単価
         lot = safe_str(record.get('lot', ''))  # 販売ロット
+        # ★ 会社名リストに追加
+        company_list.append(company)
 
         # QRコード
         if uuid:
@@ -280,7 +291,7 @@ def create_price_cards_from_df_18(df):
     c.showPage()
     c.save()
     pdf_buffer.seek(0)
-    return pdf_buffer.getvalue()
+    return pdf_buffer.getvalue(),company_list,18
 
 
 def create_price_cards_from_df_18_toc(df):
@@ -325,6 +336,9 @@ def create_price_cards_from_df_18_toc(df):
     records = df.to_dict(orient='records')
 
     card_count = 0
+    # ★ 会社名を格納するリストを用意
+    company_list = []
+
     for i, record in enumerate(records):
         # すべて空欄ならスキップ
         if all(is_empty_value(record.get(col)) for col in needed_columns):
@@ -352,6 +366,8 @@ def create_price_cards_from_df_18_toc(df):
         jan_code = safe_str(record.get('商品コード', ''))
         product_name = safe_str(record.get('商品名', ''))
         msrp = safe_str(record.get('商品単価', ''))  # 小売価格（上代）
+        # ★ 会社名リストに追加
+        company_list.append(company)
         
 
         # テキスト表示位置
@@ -398,7 +414,7 @@ def create_price_cards_from_df_18_toc(df):
     c.showPage()
     c.save()
     pdf_buffer.seek(0)
-    return pdf_buffer.getvalue()
+    return pdf_buffer.getvalue(),company_list,18
 
 def create_price_cards_from_df_24_toc(df):
     """
@@ -425,6 +441,9 @@ def create_price_cards_from_df_24_toc(df):
     records = df.to_dict(orient='records')
 
     card_count = 0
+    # ★ 会社名を格納するリストを用意
+    company_list = []
+
     for i, record in enumerate(records):
         if all(is_empty_value(record.get(col)) for col in needed_columns):
             continue
@@ -447,6 +466,8 @@ def create_price_cards_from_df_24_toc(df):
         jan_code = safe_str(record.get('商品コード', ''))
         product_name = safe_str(record.get('商品名', ''))
         msrp = safe_str(record.get('商品単価', ''))  # 小売価格（上代）
+        # ★ 会社名リストに追加
+        company_list.append(company)
         
 
 
@@ -488,4 +509,4 @@ def create_price_cards_from_df_24_toc(df):
     c.showPage()
     c.save()
     pdf_buffer.seek(0)
-    return pdf_buffer.getvalue()
+    return pdf_buffer.getvalue(),company_list,24

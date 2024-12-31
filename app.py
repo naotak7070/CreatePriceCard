@@ -25,14 +25,14 @@ if uploaded_file is not None:
     if st.button("PDFを生成"):
         # 選択に応じて処理を分岐
         if sheet_option == "18枚シート":
-            pdf_data = create_price_cards_from_df_18(df)
+            pdf_data,company_list,layout = create_price_cards_from_df_18(df)
         else:
-            pdf_data = create_price_cards_from_df_24(df)
+            pdf_data,company_list,layout = create_price_cards_from_df_24(df)
 
         st.success("PDFが生成されました。")
         st.download_button(
             label="PDFをダウンロード",
             data=pdf_data,
-            file_name="output.pdf",
+            file_name=f"output_toB_{company_list[0]}_{layout}.pdf",
             mime="application/pdf"
         )
